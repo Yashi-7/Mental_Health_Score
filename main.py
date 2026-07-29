@@ -1,15 +1,23 @@
 import joblib
-from fastapi import FastAPI
 from pydantic import BaseModel,Field
 from typing import Literal
 import pandas as pd
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+
 
 model = joblib.load('Mental_Health_Model.pkl')
 top_countries = ['Other','India','USA','Canada','Australia','UK','Germany','Mexico','Turkey','France']
 
 
 app = FastAPI()
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+templates = Jinja2Templates(directory="templates")
 
 app.add_middleware(
     CORSMiddleware,
@@ -44,8 +52,11 @@ class PredictionResponse(BaseModel):
 
 
 @app.get("/")
-def greet():
-  return "Hello! Welcome to the Mental Health Prediction API."
+async def home(request: Request):
+    return templates.TemplateResponse(
+        "index.html",
+        {"request": request}
+    )
 
 @app.post("/predict", response_model=PredictionResponse)
 def predict(data:StudentData):
