@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
- const API_BASE = "http://localhost:8000"; // must match the backend's CORS config
+ const API_BASE = "https://mental-health-score-bzxu.onrender.com"; 
 
   const form = document.getElementById("predict-form");
   const submitBtn = document.getElementById("submit-btn");
